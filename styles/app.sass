@@ -6,7 +6,7 @@
 
 .dialog-overlay
     position: fixed /* Stay in place */
-    z-index: 1 /* Sit on top */
+    z-index: 100 /* Sit on top */
     left: 0
     top: 0
     width: 100% /* Full width */
@@ -14,11 +14,14 @@
     overflow: auto /* Enable scroll if needed */
     background-color: rgb(0,0,0) /* Fallback color */
     background-color: rgba(0,0,0,0.4) /* Black w/ opacity */
+    text-align: center
 
 .dialog-window
-	padding-bottom: 10px
-	padding-top: 10px
+	padding: 20px
 	background: white
+	width: 740px
+	display: inline-block
+	margin-top: 120px
 
-.header-row
-	font
+.sort-row-span
+	cursor: pointer

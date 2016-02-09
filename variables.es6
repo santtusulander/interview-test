@@ -25,7 +25,7 @@ let people = () => {
 	while(items.size < peopleCount) {
 		items = items.set(uuid.v1(), {
 			age    : Math.floor(Math.random() * maxAge),
-			name   : names[Math.floor((Math.random() * (names.length - 1)))],
+			name   : names[Math.floor((Math.random() * names.length))],
 			gender : gender[
 						Object.keys(gender)[
 							Math.floor(

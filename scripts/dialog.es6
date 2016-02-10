@@ -1,7 +1,7 @@
 import ReactDOM  from 'react-dom';
 import React from 'react';
 import { Button, Input, Grid, Col, Row }  from 'react-bootstrap';
-import { maxAge, gender } from '../variables.es6';
+import { maxAge, gender, regExp, capitalize } from '../variables.es6';
 
 export default React.createClass({
 	propTypes: {
@@ -15,30 +15,20 @@ export default React.createClass({
 		return {
 			nameField      : '',
 			submitDisabled : true,
-			submitValid    : null,
-			nameValid      : null,
-			ageValid       : null,
-			genderValid    : null
+			nameValid      : null
 		}
 	},
 
 	submit(event) {
 		event.preventDefault();
-		if(this.props.type ==="edit")
+		if(this.props.type === "edit")
 			this.props.action({
-				name  : this.capitalize(this.refs.name.getValue()),
+				name  : capitalize(this.refs.name.getValue()),
 				age   : this.refs.age.getValue(),
 				gender: this.refs.gender.getValue()
 			});
 		else this.props.action();
 		this.props.dismiss();
-	},
-
-	capitalize(str) {
-		return str.toLowerCase().replace(
-				/^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-				letter => {return letter.toUpperCase()}
-		);
 	},
 
 	renderAgeSelect() {
@@ -53,7 +43,8 @@ export default React.createClass({
 			)
 		}
 		return (
-			<Input ref='age' type='select' defaultValue={this.props.item.age}>
+			<Input ref='age' type='select'
+				defaultValue={this.props.item.age}>
 				{ options }
 			</Input>
 		)
@@ -61,16 +52,15 @@ export default React.createClass({
 
 	validationState() {
 		let nameValid   = null;
-		let length      = this.refs.name.getValue().length;
-		let genderValid = this.refs.gender.getValue() !== 'Gender' ? 'success' : null;
-		let ageValid    = this.refs.age.getValue()    !== 'Age'    ? 'success' : null;
-		if(length > 5)      nameValid = 'success';
-		else if(length > 0) nameValid = 'warning';
-
-		let submitValid = ageValid && genderValid && nameValid === 'success' ?
-			'success' : 'warning';
-		let submitDisabled = submitValid !== 'success';
-		return { submitValid, nameValid, submitDisabled, ageValid, genderValid }
+		let name        = this.refs.name.getValue();
+		if(regExp.test(name)) {
+			if(name.length > 5)      nameValid = 'success';
+			else if(name.length > 0) nameValid = 'warning';
+		}
+		else if(!regExp.test(name))
+			nameValid = 'warning';
+		let submitDisabled = nameValid !== 'success';
+		return { nameValid, submitDisabled }
 	},
 
 	handleChange() {
@@ -81,7 +71,10 @@ export default React.createClass({
 		if(this.props.type === "edit") {
 			return (
 				<div className='dialog-window'>
-					<Row>
+					<h2 className='dialog-header'>
+						Edit person
+					</h2>
+					<Row className='dialog-paragraph'>
 						<Col xs={6} >
 							<Input type='text' ref='name'
 								bsStyle={this.state.nameValid}
@@ -89,11 +82,9 @@ export default React.createClass({
 								placeholder={this.props.item.name}
 								hasFeedback/>
 						</Col>
-						<Col xs={2} className='list-small-blocks'>
+						<Col xs={3} className='list-small-blocks'>
 							<Input type='select'
 								defaultValue={this.props.item.gender}
-								bsStyle={this.state.genderValid}
-								onChange={this.handleChange}
 								ref='gender'>
 								<option value={gender.MALE}>{gender.MALE}</option>
 								<option value={gender.FEMALE}>{gender.FEMALE}</option>
@@ -103,28 +94,36 @@ export default React.createClass({
 							{this.renderAgeSelect()}
 						</Col>
 					</Row>
-					<Row style={{ textAlign: 'center' }}>
-						<div>
-							<Button onClick={this.submit}>
-								EDIT
-							</Button>
-							<Button onClick={this.props.dismiss}>
-								CANCEL
-							</Button>
-						</div>
+					<Row className='dialog-button-row'>
+						<Button
+							disabled={this.state.submitDisabled}
+							onClick={this.submit}
+							bsClass='dialog-button-submit'>
+							EDIT
+						</Button>
+						<Button
+							onClick={this.props.dismiss}
+							bsClass='dialog-button-cancel'>
+							CANCEL
+						</Button>
 					</Row>
 				</div>
 			);
 		}
 		return (
 			<div className='dialog-window'>
-				Do you really wish to delete this item?
-				<Row>
-					<Button onClick={this.submit}>
-						remove
+				<h2 className='dialog-header'>
+					Remove person
+				</h2>
+				<p className='dialog-paragraph'>
+					Are you sure you want to remove this entry?
+				</p>
+				<Row className='dialog-button-row'>
+					<Button bsClass='dialog-button-submit' onClick={this.submit}>
+						REMOVE
 					</Button>
-					<Button onClick={this.props.dismiss}>
-						cancel
+					<Button bsClass='dialog-button-cancel' onClick={this.props.dismiss}>
+						CANCEL
 					</Button>
 				</Row>
 			</div>

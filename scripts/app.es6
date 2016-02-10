@@ -4,11 +4,25 @@ import React     from 'react';
 
 import Dialog from './dialog.es6';
 
-import { people, usersToList, gender, maxAge } from '../variables.es6';
 import {
-	Pagination, Button, ListGroup,
-	ListGroupItem, Grid, Row, Col, Input }
-from 'react-bootstrap';
+	people,
+	usersToList,
+	gender,
+	maxAge,
+	regExp,
+	capitalize
+} from '../variables.es6';
+
+import {
+	Pagination,
+	Button,
+	ListGroup,
+	ListGroupItem,
+	Grid,
+	Row,
+	Col,
+	Input
+} from 'react-bootstrap';
 
 
 ReactDOM.render(
@@ -33,9 +47,9 @@ ReactDOM.render(
 			}
 		},
 
-		sortDesc(item, sortBy) {
+		sortDesc(item, sortOrder) {
 			let newState = {
-					people: this.state.people.sort(
+				people: this.state.people.sort(
 					(a, b) => {
 						if (a[item] > b[item])
 							return -1;
@@ -45,11 +59,11 @@ ReactDOM.render(
 					}
 				)
 			}
-			newState[sortBy] = !this.state[sortBy]
+			newState[sortOrder] = !this.state[sortOrder]
 			this.setState(newState)
 		},
 
-		sortAsc(item, sortBy) {
+		sortAsc(item, sortOrder) {
 			let newState = {
 				people: this.state.people.sort(
 					(a, b) => {
@@ -61,7 +75,7 @@ ReactDOM.render(
 					}
 				)
 			}
-			newState[sortBy] = !this.state[sortBy]
+			newState[sortOrder] = !this.state[sortOrder]
 			this.setState(newState)
 		},
 
@@ -71,12 +85,15 @@ ReactDOM.render(
 
 		validationState() {
 			let nameValid   = null;
-			let length      = this.refs.name.getValue().length;
+			let name        = this.refs.name.getValue();
 			let genderValid = this.refs.gender.getValue() !== 'Gender' ? 'success' : null;
 			let ageValid    = this.refs.age.getValue()    !== 'Age'    ? 'success' : null;
-			if(length > 5)      nameValid = 'success';
-			else if(length > 0) nameValid = 'warning';
-
+			if(regExp.test(name)) {
+				if(name.length > 5)      nameValid = 'success';
+				else if(name.length > 0) nameValid = 'warning';
+			}
+			else if(!regExp.test(name))
+				nameValid = 'warning';
 			let submitValid = ageValid && genderValid && nameValid === 'success' ?
 				'success' : 'warning';
 			let submitDisabled = submitValid !== 'success';
@@ -92,7 +109,7 @@ ReactDOM.render(
 			let user = {
 				gender : this.refs.gender.getValue(),
 				age    : this.refs.age.getValue(),
-				name   : this.refs.name.getValue()
+				name   : capitalize(this.refs.name.getValue())
 			}
 			let newState = {
 				people: this.state.people.set(uuid.v1(), user)
@@ -100,11 +117,11 @@ ReactDOM.render(
 			this.setState(newState);
 		},
 
-		sortRouter(attribute, sortBy) {
-			if(this.state[sortBy])
-				this.sortAsc(attribute, sortBy)
+		sortRouter(attribute, sortOrder) {
+			if(this.state[sortOrder])
+				this.sortAsc(attribute, sortOrder)
 			else
-				this.sortDesc(attribute, sortBy)
+				this.sortDesc(attribute, sortOrder)
 		},
 
 		toggleDialog(type, itemToEdit) {
@@ -180,29 +197,34 @@ ReactDOM.render(
 			, elements  = [];
 			this.state.people.forEach((value, key) => {
 				if(startAt <= iteration && iteration < stopAt) {
-						elements.push(
-							<ListGroupItem
-								key={key}
-								onClick={ e => this.toggleDialog("edit", key) }>
-								<Row>
-									<Col xs={6}>{ value.name }</Col>
-									<Col xs={2} className='list-small-blocks'>
-										{ value.gender }
-									</Col>
-									<Col xs={2} className='list-small-blocks'>
-										{ value.age }
-									</Col>
-									<Col xs={2} className='list-small-blocks'>
-										<i
-											className='fa fa-times fa-2x'
-											onClick={ e => {
-												e.stopPropagation();
-												this.toggleDialog("delete", key)
-											}}/>
-									</Col>
-								</Row>
-							</ListGroupItem>
-							)
+					let bgColor = iteration % 2 !== 0 ?
+						{ background: '#eef4fa' } :
+						{ background: '#FFFFFF' };
+					elements.push(
+						<ListGroupItem
+							key={key}
+							onClick={ e => this.toggleDialog("edit", key) }
+							className='list-item'
+							style={bgColor}>
+							<Row>
+								<Col xs={6}><p>{ value.name }</p></Col>
+								<Col xs={2} className='list-small-blocks'>
+									<p>{ value.gender }</p>
+								</Col>
+								<Col xs={2} className='list-small-blocks'>
+									<p>{ value.age }</p>
+								</Col>
+								<Col xs={2} className='list-small-blocks'>
+									<i
+										className='fa fa-times fa-2x x-icon'
+										onClick={ e => {
+											e.stopPropagation();
+											this.toggleDialog("delete", key)
+										}}/>
+								</Col>
+							</Row>
+						</ListGroupItem>
+						)
 
 				}
 				iteration++;
@@ -212,24 +234,25 @@ ReactDOM.render(
 
 		renderSortingRow() {
 			return (
-				<Row>
+				<Row className='sort-row'>
 					<Col xs={6} >
 						<span className='sort-row-span'
-							onClick={e => this.sortRouter('name','nameSortOrder')}>
-							Name <i className='fa fa-sort'/>
+							onClick={e => this.sortRouter('name','nameSortOrder')}
+							style={{ marginLeft: '15px' }}>
+							Name <i className='fa fa-sort sort-icon'/>
 						</span>
 					</Col>
 					<Col xs={2} className='list-small-blocks'>
 						<span className='sort-row-span'
 							onClick={e => this.sortRouter('gender','genderSortOrder')}>
-							Gender <i className='fa fa-sort'
+							Gender <i className='fa fa-sort sort-icon'
 								onClick={e => this.sortRouter('gender','genderSortOrder')}/>
 						</span>
 					</Col>
 					<Col xs={2} className='list-small-blocks'>
 						<span className='sort-row-span'
 							onClick={e => this.sortRouter('age','ageSortOrder')}>
-							Age <i className='fa fa-sort'/>
+							Age <i className='fa fa-sort sort-icon'/>
 						</span>
 					</Col>
 				</Row>
@@ -280,9 +303,9 @@ ReactDOM.render(
 				: null;
 			return (
 				<Grid>
-					<Row className='header-row'>
-						<Col xs={6}>Create user</Col>
-					</Row>
+					<h2 className='dialog-header'>
+						Create person
+					</h2>
 					{this.renderCreationRow()}
 					{this.renderSortingRow()}
 					<ListGroup>

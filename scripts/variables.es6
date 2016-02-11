@@ -14,7 +14,7 @@ const names = [
 ]
 
 const regExp      = /^[a-zA-ZäÄåÅöÖ ]+$/;
-const peopleCount = 10;
+const peopleCount = 100;
 const usersToList = 5;
 const maxAge      = 100;
 

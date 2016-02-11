@@ -11,7 +11,7 @@ import {
 	maxAge,
 	regExp,
 	capitalize
-} from '../variables.es6';
+} from './variables.es6';
 
 import {
 	Pagination,
@@ -46,6 +46,10 @@ ReactDOM.render(
 				genderValid    : null
 			}
 		},
+
+		/**
+		 * Sorting functions.
+		 */
 
 		sortDesc(item, sortOrder) {
 			let newState = {
@@ -83,17 +87,23 @@ ReactDOM.render(
 			this.setState({ activePage: selectedEvent.eventKey });
 		},
 
+		/**
+		 * Form validation with RE, setting state variables accordingly
+		 */
+
 		validationState() {
 			let nameValid   = null;
 			let name        = this.refs.name.getValue();
 			let genderValid = this.refs.gender.getValue() !== 'Gender' ? 'success' : null;
 			let ageValid    = this.refs.age.getValue()    !== 'Age'    ? 'success' : null;
 			if(regExp.test(name)) {
-				if(name.length > 5)      nameValid = 'success';
+				if     (name.length > 5) nameValid = 'success';
 				else if(name.length > 0) nameValid = 'warning';
 			}
-			else if(!regExp.test(name))
+			else if(!regExp.test(name) && name.length > 0) {
 				nameValid = 'warning';
+			}
+
 			let submitValid = ageValid && genderValid && nameValid === 'success' ?
 				'success' : 'warning';
 			let submitDisabled = submitValid !== 'success';
@@ -117,6 +127,10 @@ ReactDOM.render(
 			this.setState(newState);
 		},
 
+		/**
+		 * Determines which attribute to sort by and in which order
+		 */
+
 		sortRouter(attribute, sortOrder) {
 			if(this.state[sortOrder])
 				this.sortAsc(attribute, sortOrder)
@@ -132,6 +146,10 @@ ReactDOM.render(
 			})
 		},
 
+		/**
+		 * Passed to the dialog component as props, triggered on dialog cancel and submit
+		 */
+
 		dialogDismiss() {
 			this.setState({ dialogActive: !this.state.dialogActive })
 		},
@@ -146,6 +164,10 @@ ReactDOM.render(
 					people: this.state.people.delete(this.state.itemToEdit)
 				})
 		},
+
+		/**
+		 * RENDER FUNCTIONS FROM HERE ON
+		 */
 
 		renderAgeSelect() {
 			let options = [];
@@ -182,7 +204,11 @@ ReactDOM.render(
 					<Col xs={6} xsOffset={3} className='pagination-container'>
 						<Pagination
 							bsSize='small'
+							bsClass='custom-pagination'
+							buttonComponentClass='span'
+							ellipsis={true}
 							items={pages}
+							maxButtons={4}
 							activePage={this.state.activePage}
 							onSelect={this.changePage} />
 					</Col>
@@ -190,13 +216,19 @@ ReactDOM.render(
 			);
 		},
 
+		/**
+		 * Iterate through the people map, filtering items by pagination,
+		 * adding onClick listeners to items etc...
+		 */
+
 		renderList() {
 			let iteration = 0
 			, startAt   = this.state.activePage * usersToList - usersToList
 			, stopAt    = this.state.activePage * usersToList
 			, elements  = [];
-			this.state.people.forEach((value, key) => {
-				if(startAt <= iteration && iteration < stopAt) {
+			this.state.people.map((value, key) => {
+				if(iteration >= stopAt) return;
+				if(startAt <= iteration) {
 					let bgColor = iteration % 2 !== 0 ?
 						{ background: '#eef4fa' } :
 						{ background: '#FFFFFF' };
@@ -224,8 +256,7 @@ ReactDOM.render(
 								</Col>
 							</Row>
 						</ListGroupItem>
-						)
-
+					)
 				}
 				iteration++;
 			})

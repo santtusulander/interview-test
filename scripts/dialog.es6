@@ -1,7 +1,7 @@
 import ReactDOM  from 'react-dom';
 import React from 'react';
 import { Button, Input, Grid, Col, Row }  from 'react-bootstrap';
-import { maxAge, gender, regExp, capitalize } from '../variables.es6';
+import { maxAge, gender, regExp, capitalize } from './variables.es6';
 
 export default React.createClass({
 	propTypes: {
@@ -67,6 +67,10 @@ export default React.createClass({
 		this.setState( this.validationState() );
 	},
 
+	/**
+	 * Render remove-, or edit-dialog depending on passed 'type'-prop.
+	 */
+
 	renderForm() {
 		if(this.props.type === "edit") {
 			return (
@@ -111,7 +115,7 @@ export default React.createClass({
 			);
 		}
 		return (
-			<div className='dialog-window'>
+			<div xs={6} className='dialog-window'>
 				<h2 className='dialog-header'>
 					Remove person
 				</h2>

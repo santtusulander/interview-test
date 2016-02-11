@@ -31,11 +31,7 @@ gulp.task('build-js', bundle);
 
 gulp.task('build-css', function () {
   return gulp.src('./styles/app.sass')
-    .pipe(sass({
-      includePaths: require('node-bourbon').with('dist'),
-      indentedSyntax: true,
-      errLogToConsole: true
-    }).on('error', sass.logError))
+    .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('dist'));
 });
 

@@ -74,6 +74,9 @@ input, select
 	width: 600px
 	display: inline-block
 	margin-top: 120px
+	@media screen and (max-width: 600px)
+		width: 400px;
+		float: none;
 
 .sort-row-span
 	color: $gray
@@ -141,9 +144,15 @@ input, select
 
 	li
 		cursor: pointer
-		padding: 5 9 5 9
-		display: inline
+		display: inherit
+		line-height: 30px
 		margin: 0 7 0 7
+
+		span
+			display: inherit
+			width: 30px
+			height: 30px
+
 
 		&:hover
 			+circle(20px, $caribbeanGreen)

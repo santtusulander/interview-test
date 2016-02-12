@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "express": "^4.13.4",
     "immutable": "^3.7.6",
+    "path": "^0.12.7",
     "react": "^0.14.7",
     "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.7",
@@ -19,7 +21,6 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-webserver": "^0.9.1",
     "node-bourbon": "^4.2.3",
-    "path": "^0.12.7",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.6.0"

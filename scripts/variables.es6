@@ -1,7 +1,15 @@
 import uuid      from 'uuid';
 import immutable from 'immutable';
 
-const gender = { MALE: 'Male', FEMALE: 'Female' };
+/**
+ * Constants used throughout the app and resources for list item generation
+ */
+
+const gender      = { MALE: 'Male', FEMALE: 'Female' };
+const maxAge      = 100;
+const regExp      = /^[a-zA-ZäÄåÅöÖ ]+$/;
+const peopleCount = 100;
+const usersToList = 20;
 const names = [
 	'Donald Duck',
 	'Minnie Mouse',
@@ -13,10 +21,9 @@ const names = [
 	'Dewey'
 ]
 
-const regExp      = /^[a-zA-ZäÄåÅöÖ ]+$/;
-const peopleCount = 100;
-const usersToList = 5;
-const maxAge      = 100;
+/**
+ * Capitalize the first letters of given string's words
+ */
 
 let capitalize = (str) => {
 	return str.toLowerCase().replace(
